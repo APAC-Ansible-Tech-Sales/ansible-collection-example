@@ -27,6 +27,9 @@ jobs:
         uses: actions/checkout@main
         with:
           token: ${{ steps.gh_token.outputs.token }}
+          # Use the target branch tip (not the PR event SHA) so we include
+          # commits from earlier jobs like semver bump.
+          ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then
@@ -63,6 +66,8 @@ jobs:
       - name: Push Documentation
         if: steps.commit.outputs.has_changes == 'true'
         run: |
-          git push
+          BRANCH="${{ github.event.pull_request.base.ref || github.ref_name }}"
+          git pull --rebase origin "$BRANCH"
+          git push origin "HEAD:$BRANCH"
         shell: bash
         working-directory: "${{ github.workspace }}"
