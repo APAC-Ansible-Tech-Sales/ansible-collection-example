@@ -41,11 +41,7 @@ jobs:
           fetch-depth: 0
 
       - name: Bump Semver
-        uses: technology-services-and-platforms-accnz/action-bump-semver@1.0.3
-        with:
-          default_tag: 1.0.0
-          dry_run: true
-          output_variable: SEMVER
+        uses: ./.github/workflow-templates/bump_semver.yml
 
       - name: Update galaxy.yml with new version
         run: |-
@@ -63,8 +59,8 @@ jobs:
             sed -i "s/version: .*/version: $SEMVER/" galaxy.yml
 
             echo "Configuring git"
-          git config user.name "${{ steps.app-token.outputs.app-slug && 'ansible-cicd-tsp-accnz[bot]' || 'svc_github_org_tsp_tanda_rw' }}"
-          git config user.email "${{ steps.app-token.outputs.app-slug && 'ansible-cicd-tsp-accnz[bot]@users.noreply.github.com' || 'svc_github_org_tsp_tanda_rw@acc.co.nz' }}"
+          git config user.name "${{ steps.app-token.outputs.app-slug && 'ansible-cicd-tsp[bot]' || 'svc_github' }}"
+          git config user.email "${{ steps.app-token.outputs.app-slug && 'ansible-cicd-tsp[bot]@users.noreply.github.com' || 'svc_github@example.com' }}"
 
             git commit -am "Bump galaxy version to $SEMVER"
           else

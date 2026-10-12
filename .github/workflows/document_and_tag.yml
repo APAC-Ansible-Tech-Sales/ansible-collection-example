@@ -18,7 +18,7 @@ jobs:
   #   needs: docsible
   #   permissions:
   #     contents: write
-  #   uses: technology-services-and-platforms-accnz/workflow-templates/.github/workflows/ansible_collection_tag.yml@1.1.60
+  #   uses: ./.github/workflow-templates/ansible_collection_release.yml
   #   with:
   #     ref_name: "${{ github.ref_name }}"
   #     GhAppId: ${{ vars.ANSIBLE_GITHUB_APP_ID }}
@@ -37,7 +37,7 @@ jobs:
   #       with:
   #         ref: main
   #     - name: Publish collection to Private Automation Hub
-  #       uses: technology-services-and-platforms-accnz/action-publish-to-pah@v2.0.1
+  #       uses: ./.github/workflow-templates/publish_to_pah.yml
   #       with:
   #         source_path: ${{ github.workspace }}
   #         vault_password: ${{ secrets.PAH_VAULT_PASSWORD }}

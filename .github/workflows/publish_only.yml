@@ -18,7 +18,7 @@ jobs:
         with:
           ref: ${{ inputs.version }}
       - name: Publish collection to Private Automation Hub
-        uses: technology-services-and-platforms-accnz/action-publish-to-pah@v2.0.1
+        uses: ./.github/workflow-templates/publish_to_pah.yml
         with:
           source_path: ${{ github.workspace }}
           vault_password: ${{ secrets.PAH_VAULT_PASSWORD }}
