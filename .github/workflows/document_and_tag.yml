@@ -27,7 +27,9 @@ jobs:
         uses: AcmeSoftwareLLC/semver-tag@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Push Tag
+        run: |
+          git push --tags
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
   #   needs: collection_tag
