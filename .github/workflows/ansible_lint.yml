@@ -1,3 +1,4 @@
+---
 name: Ansible Lint
 on:
   workflow_dispatch:
@@ -7,4 +8,4 @@ on:
 
 jobs:
   ansible_lint:
-    uses: ./.github/workflows/reusable_ansible_lint.yml
+    uses: ./.github/workflows/template_ansible_lint.yml
