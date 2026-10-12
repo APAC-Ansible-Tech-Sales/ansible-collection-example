@@ -28,11 +28,13 @@ jobs:
         with:
           ssh-key: ${{ secrets.PHILWSSHDEPLOYKEY }}
       - name: Bump Version
+        id: semver
         uses: AcmeSoftwareLLC/semver-tag@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push Tag
+      - name: Tag And Push
         run: |
+          git tag -a ${{ steps.semver.outputs.next_tag }} -m "Version ${{ steps.semver.outputs.next_tag }}"
           git push --tags
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
