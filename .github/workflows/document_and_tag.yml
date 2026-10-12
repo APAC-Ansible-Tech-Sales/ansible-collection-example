@@ -1,5 +1,6 @@
 name: Ansible Collection Docs, Tagging and Publishing
 on:
+  workflow_dispatch: # Remove later
   pull_request:
     branches:
       - main
@@ -7,25 +8,26 @@ on:
       - closed
 
 jobs:
-  docsible:
-    if: github.event.pull_request.merged == true
-    permissions:
-      contents: write
-    uses: ./.github/workflows/template_docsible.yml
-    secrets:
-      DeployPrivateSSHKey: ${{ secrets.PHILWSSHDEPLOYKEY }}
-
-  # collection_tag:
+  # docsible:
   #   if: github.event.pull_request.merged == true
-  #   needs: docsible
   #   permissions:
   #     contents: write
-  #   uses: ./.github/workflow-templates/ansible_collection_release.yml
-  #   with:
-  #     ref_name: "${{ github.ref_name }}"
-  #     GhAppId: ${{ vars.ANSIBLE_GITHUB_APP_ID }}
+  #   uses: ./.github/workflows/template_docsible.yml
   #   secrets:
-  #     GhAppPrivateKey: ${{ secrets.ANSIBLE_GITHUB_APP_PRIVATE_KEY }}
+  #     DeployPrivateSSHKey: ${{ secrets.PHILWSSHDEPLOYKEY }}
+
+  collection_tag:
+    # if: github.event.pull_request.merged == true
+    # needs: docsible
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Bump Version
+        uses: flatherskevin/semver-action@v1
+        with:
+          incrementLevel: patch
+          source: tags
 
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
