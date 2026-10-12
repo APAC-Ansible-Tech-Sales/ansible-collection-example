@@ -1,5 +1,5 @@
 ---
-name: Docsible ( Generate Documentation )
+name: Docsible ( Generate Documentation ) Template
 on:
   workflow_call:
 
