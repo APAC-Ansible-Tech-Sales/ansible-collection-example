@@ -1,0 +1,40 @@
+---
+name: Bump SemVer Template
+on:
+  workflow_call:
+    secrets:
+      GitHubAppPrivateKey:
+        description: "The private key for the GitHub App"
+        required: true
+    inputs:
+      GitHubAppId:
+        description: "The id of the GitHub App"
+        required: true
+        type: string
+
+jobs:
+  bump_semver:
+    name: Bump SemVer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@main
+        id: gh_token
+        with:
+          private-key: ${{ secrets.GitHubAppPrivateKey }}
+          app-id: ${{ inputs.GitHubAppId }}
+      - name: Checkout Repository
+        uses: actions/checkout@main
+        with:
+          token: ${{ steps.gh_token.outputs.token }}
+      - name: Bump Version
+        id: semver
+        uses: AcmeSoftwareLLC/semver-tag@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag And Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a ${{ steps.semver.outputs.next_tag }} -m "Version ${{ steps.semver.outputs.next_tag }}"
+          git push --tags

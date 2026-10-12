@@ -1,35 +1,32 @@
 ---
-name: Docsible ( Generate Documentation ) Template
+name: Docsible (Generate Documentation) Template
 on:
   workflow_call:
     secrets:
-      DeployPrivateSSHKey:
-        description: "The GitHub Deploy Private SSH Key"
+      GitHubAppPrivateKey:
+        description: "The private key for the GitHub App"
         required: true
-    #   GitHubAppPrivateKey:
-    #     description: "The private key for the GitHub App"
-    #     required: true
-    # inputs:
-    #   GitHubAppId:
-    #     description: "The id of the GitHub App"
-    #     required: true
-    #     type: string
+    inputs:
+      GitHubAppId:
+        description: "The id of the GitHub App"
+        required: true
+        type: string
 
 jobs:
   docsible:
     name: Generate Documentation
     runs-on: ubuntu-latest
     steps:
-      # - name: Generate GitHub App Token
-      #   uses: actions/create-github-app-token@v1
-      #   id: app-token
-      #   with:
-      #     app-id: ${{ inputs.GitHubAppId }}
-      #     private-key: ${{ secrets.GitHubAppPrivateKey }}    
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@main
+        id: gh_token
+        with:
+          private-key: ${{ secrets.GitHubAppPrivateKey }}
+          app-id: ${{ inputs.GitHubAppId }}
       - name: Checkout Repository
         uses: actions/checkout@main
         with:
-          ssh-key: ${{ secrets.DeployPrivateSSHKey }}
+          token: ${{ steps.gh_token.outputs.token }}
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then

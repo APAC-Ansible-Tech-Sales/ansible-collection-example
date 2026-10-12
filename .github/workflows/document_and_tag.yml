@@ -1,6 +1,5 @@
 name: Ansible Collection Docs, Tagging and Publishing
 on:
-  workflow_dispatch: # Remove later
   pull_request:
     branches:
       - main
@@ -8,36 +7,34 @@ on:
       - closed
 
 jobs:
-  # docsible:
-  #   if: github.event.pull_request.merged == true
-  #   permissions:
-  #     contents: write
-  #   uses: ./.github/workflows/template_docsible.yml
-  #   secrets:
-  #     DeployPrivateSSHKey: ${{ secrets.PHILWSSHDEPLOYKEY }}
-
-  collection_tag:
-    # if: github.event.pull_request.merged == true
-    # needs: docsible
-    runs-on: ubuntu-latest
+  docsible:
+    if: github.event.pull_request.merged == true
     permissions:
       contents: write
-    steps:
-      - name: Bump Version
-        uses: flatherskevin/semver-action@v1
-        with:
-          incrementLevel: patch
-          source: tags
-
+    uses: ./.github/workflows/template_docsible.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+    secrets:
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+  collection_tag:
+    if: github.event.pull_request.merged == true
+    needs: docsible
+    permissions:
+      contents: write
+    uses: ./.github/workflows/template_bump_semver.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+    secrets:
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
   #   needs: collection_tag
   #   permissions:
   #     contents: read
-  #   runs-on: release-general-linux
+  #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v5
+  #       uses: actions/checkout@main
   #       with:
   #         ref: main
   #     - name: Publish collection to Private Automation Hub
