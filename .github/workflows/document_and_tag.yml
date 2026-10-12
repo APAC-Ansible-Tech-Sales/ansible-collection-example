@@ -1,4 +1,4 @@
-name: Ansible Collection Docs, Tagging and Publishing
+name: Ansible Collection Docs and Tag
 on:
   pull_request:
     branches:
@@ -16,6 +16,7 @@ jobs:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+
   collection_tag:
     if: github.event.pull_request.merged == true
     needs: docsible
@@ -26,20 +27,3 @@ jobs:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
-  # publish_to_pah:
-  #   if: github.event.pull_request.merged == true
-  #   needs: collection_tag
-  #   permissions:
-  #     contents: read
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@main
-  #       with:
-  #         ref: main
-  #     - name: Publish collection to Private Automation Hub
-  #       uses: ./.github/workflow-templates/publish_to_pah.yml
-  #       with:
-  #         source_path: ${{ github.workspace }}
-  #         vault_password: ${{ secrets.PAH_VAULT_PASSWORD }}
-  #         github_token: ${{ secrets.ORG_READ_CHECKOUT_TOKEN }}

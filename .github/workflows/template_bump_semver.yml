@@ -38,3 +38,28 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -a ${{ steps.semver.outputs.next_tag }} -m "Version ${{ steps.semver.outputs.next_tag }}"
           git push --tags
+      - name: Bump Version in Galaxy Metadata
+        run: |
+          if [ ! -f galaxy.yml ]; then
+            echo "galaxy.yml does not exist."
+            exit 1
+          fi
+
+          # Trim dry-run / pre-release suffix (e.g. 1.2.3-dryrun -> 1.2.3)
+          SEMVER=$(echo "${{ steps.semver.outputs.next_tag }}" | cut -d '-' -f 1)
+          SEMVER="${SEMVER#v}"
+
+          if grep -q "^version: ${SEMVER}$" galaxy.yml; then
+            echo "galaxy.yml already has version $SEMVER"
+            exit 0
+          fi
+
+          echo "Updating galaxy.yml with version $SEMVER"
+          sed -i "s/^version: .*/version: ${SEMVER}/" galaxy.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump galaxy version to $SEMVER"
+          git push
+        shell: bash
+        working-directory: "${{ github.workspace }}"
