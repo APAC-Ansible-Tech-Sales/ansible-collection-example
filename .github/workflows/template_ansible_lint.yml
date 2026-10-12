@@ -1,5 +1,5 @@
 ---
-name: Ansible Lint
+name: Ansible Lint Template
 on:
   workflow_call:
 
