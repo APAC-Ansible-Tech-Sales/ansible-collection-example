@@ -44,13 +44,19 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          if ! git diff-index --quiet HEAD --; then
+
+          # Stage adds, edits, and deletes (docsible removes/replaces READMEs)
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No documentation changes to commit."
+            git status --porcelain
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Documentation changes detected:"
+            git status --porcelain
             git commit -m "Update documentation"
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No documentation changes to commit."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
         working-directory: "${{ github.workspace }}"
