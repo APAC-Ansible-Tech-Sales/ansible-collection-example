@@ -1,0 +1,57 @@
+---
+- name: Assert Required Variables
+  block:
+    - name: Assert Required Facts
+      ansible.builtin.assert:
+        that:
+          - client_id is defined
+          - client_secret is defined
+        fail_msg: >
+          client_id and client_secret must be defined when not passing a graph API token
+      when:
+        graph_access_token is not defined
+
+    - name: Assert Required Facts
+      ansible.builtin.assert:
+        that:
+          - graph_access_token is defined
+        fail_msg: >
+          No graph API token supplied, alternatively pass client_id and client_secret to fetch one instead
+      when: client_id is not defined or client_secret is not defined
+
+- name: Get Graph API token if not provided by variable
+  when:
+    graph_access_token is not defined
+  block:
+    - name: Get Graph API token
+      ansible.builtin.import_role:
+        name: auth_get_access_token
+      register:
+        graph_token_response
+
+    - name: Set fact for graph access token
+      ansible.builtin.set_fact:
+        graph_access_token: "{{ graph_token_response.json.access_token }}"
+
+- name: Send Email with Graph API
+  ansible.builtin.uri:
+    url: "https://graph.microsoft.com/v1.0/users/{{ sender_email }}/sendMail"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ graph_access_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      message:
+        subject: "{{ email_subject }}"
+        body:
+          contentType: "{{ email_content_type | default('Text') }}"
+          content: "{{ email_body }}"
+        toRecipients:
+          - emailAddress:
+              address: "{{ recipient_email }}"
+        ccRecipients: "{{ cc_recipients if cc_recipients is defined and cc_recipients|length > 0 else omit }}"
+      saveToSentItems: "true" # Set to 'false' if you don't want sent items saved
+    status_code: [202] # A 202 Accepted status means the request was successful
+  register: send_mail_response
+  no_log: true

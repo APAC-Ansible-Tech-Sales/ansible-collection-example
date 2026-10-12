@@ -1,0 +1,22 @@
+---
+- name: Assert required variables are set
+  ansible.builtin.assert:
+    that:
+      - tenant_id is defined
+      - client_id is defined
+      - client_secret is defined
+
+- name: Acquire Microsoft Graph API access token
+  ansible.builtin.uri:
+    url: "https://login.microsoftonline.com/{{ tenant_id }}/oauth2/v2.0/token"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      client_id: "{{ client_id }}"
+      client_secret: "{{ client_secret }}"
+      scope: "https://graph.microsoft.com/.default"
+      grant_type: "client_credentials"
+    status_code: [200]
+    return_content: true
+  register: graph_token_response
+  no_log: true
