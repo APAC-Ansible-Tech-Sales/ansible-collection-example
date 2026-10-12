@@ -16,7 +16,7 @@ jobs:
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
-      DeployPrivateSSHKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
 
   # collection_tag:
   #   if: github.event.pull_request.merged == true
