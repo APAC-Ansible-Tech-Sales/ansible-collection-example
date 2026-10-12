@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@latest
+        uses: actions/checkout@main
       - name: Ensure ansible-lint CLI
         run: |
           if ! command -v ansible-lint >/dev/null; then
