@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Phil White
+  description: Send an email using the Microsoft Graph API.
+  company: Red Hat
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.19"
