@@ -23,6 +23,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+        with:
+          ssh-key: ${{ secrets.DeployPrivateSSHKey }}
       - name: Bump Version
         uses: AcmeSoftwareLLC/semver-tag@main
         with:
