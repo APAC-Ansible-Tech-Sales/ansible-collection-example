@@ -8,31 +8,33 @@ on:
       - closed
 
 jobs:
-  # docsible:
-  #   if: github.event.pull_request.merged == true
-  #   permissions:
-  #     contents: write
-  #   uses: ./.github/workflows/template_docsible.yml
-  #   secrets:
-  #     DeployPrivateSSHKey: ${{ secrets.PHILWSSHDEPLOYKEY }}
-
-  collection_tag:
-    # if: github.event.pull_request.merged == true
-    # needs: docsible
+  docsible:
+    if: github.event.pull_request.merged == true
     permissions:
       contents: write
-    uses: ./.github/workflows/template_bump_semver.yml
+    uses: ./.github/workflows/template_docsible.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
-      DeployPrivateSSHKey: ${{ secrets.PHILWSSHDEPLOYKEY }}
+      DeployPrivateSSHKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+
+  # collection_tag:
+  #   if: github.event.pull_request.merged == true
+  #   needs: docsible
+  #   permissions:
+  #     contents: write
+  #   uses: ./.github/workflows/template_bump_semver.yml
+  #   secrets:
+  #     DeployPrivateSSHKey: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
   #   needs: collection_tag
   #   permissions:
   #     contents: read
-  #   runs-on: release-general-linux
+  #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v5
+  #       uses: actions/checkout@main
   #       with:
   #         ref: main
   #     - name: Publish collection to Private Automation Hub

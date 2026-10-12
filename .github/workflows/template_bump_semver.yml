@@ -3,17 +3,14 @@ name: Bump SemVer Template
 on:
   workflow_call:
     secrets:
-      DeployPrivateSSHKey:
-        description: "The GitHub Deploy Private SSH Key"
+      GitHubAppPrivateKey:
+        description: "The private key for the GitHub App"
         required: true
-    #   GitHubAppPrivateKey:
-    #     description: "The private key for the GitHub App"
-    #     required: true
-    # inputs:
-    #   GitHubAppId:
-    #     description: "The id of the GitHub App"
-    #     required: true
-    #     type: string
+    inputs:
+      GitHubAppId:
+        description: "The id of the GitHub App"
+        required: true
+        type: string
 
 jobs:
   bump_semver:
@@ -23,7 +20,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@main
         with:
-          ssh-key: ${{ secrets.DeployPrivateSSHKey }}
+          token: ${{ secrets.GITHUB_TOKEN }
       - name: Bump Version
         id: semver
         uses: AcmeSoftwareLLC/semver-tag@main
