@@ -9,7 +9,6 @@ on:
 jobs:
   collection_tag:
     if: github.event.pull_request.merged == true
-    needs: docsible
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
@@ -17,9 +16,9 @@ jobs:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
-
   docsible:
     if: github.event.pull_request.merged == true
+    needs: collection_tag
     permissions:
       contents: write
     uses: ./.github/workflows/template_docsible.yml
