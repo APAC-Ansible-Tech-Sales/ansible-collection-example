@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@latest
+        uses: actions/checkout@main
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then
-            pip3 install docsible
+            pip3 install docsible==0.8.0
           fi
         shell: bash
         working-directory: "${{ github.workspace }}"
@@ -23,14 +23,22 @@ jobs:
         shell: bash
         working-directory: "${{ github.workspace }}"
       - name: Commit Documentation
+        id: commit
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
           git add .
-          git commit -m "Update documentation"
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "Update documentation"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No documentation changes to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
         shell: bash
         working-directory: "${{ github.workspace }}"
       - name: Push Documentation
+        if: steps.commit.outputs.has_changes == 'true'
         run: |
           git push
         shell: bash
