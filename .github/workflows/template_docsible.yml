@@ -2,14 +2,34 @@
 name: Docsible ( Generate Documentation ) Template
 on:
   workflow_call:
+    secrets:
+      DeployPrivateSSHKey:
+        description: "The GitHub Deploy Private SSH Key"
+        required: true
+    #   GitHubAppPrivateKey:
+    #     description: "The private key for the GitHub App"
+    #     required: true
+    # inputs:
+    #   GitHubAppId:
+    #     description: "The id of the GitHub App"
+    #     required: true
+    #     type: string
 
 jobs:
   docsible:
     name: Generate Documentation
     runs-on: ubuntu-latest
     steps:
+      # - name: Generate GitHub App Token
+      #   uses: actions/create-github-app-token@v1
+      #   id: app-token
+      #   with:
+      #     app-id: ${{ inputs.GitHubAppId }}
+      #     private-key: ${{ secrets.GitHubAppPrivateKey }}    
       - name: Checkout Repository
         uses: actions/checkout@main
+        with:
+          ssh-key: ${{ secrets.DeployPrivateSSHKey }}
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then
@@ -25,8 +45,8 @@ jobs:
       - name: Commit Documentation
         id: commit
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "github-actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
           if ! git diff-index --quiet HEAD --; then
             git commit -m "Update documentation"
