@@ -24,10 +24,9 @@ jobs:
       contents: write
     steps:
       - name: Bump Version
-        uses: flatherskevin/semver-action@v1
+        uses: AcmeSoftwareLLC/semver-tag@main
         with:
-          incrementLevel: patch
-          source: tags
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   # publish_to_pah:
   #   if: github.event.pull_request.merged == true
