@@ -26,7 +26,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@main
         with:
-          ssh-key: ${{ secrets.DeployPrivateSSHKey }}
+          ssh-key: ${{ secrets.PHILWSSHDEPLOYKEY }}
       - name: Bump Version
         uses: AcmeSoftwareLLC/semver-tag@main
         with:
