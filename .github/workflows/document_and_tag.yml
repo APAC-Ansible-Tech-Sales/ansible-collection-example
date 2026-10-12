@@ -1,5 +1,6 @@
 name: Ansible Collection Docs, Tagging and Publishing
 on:
+  workflow_dispatch: # Remove later
   pull_request:
     branches:
       - main
@@ -11,7 +12,7 @@ jobs:
     if: github.event.pull_request.merged == true
     permissions:
       contents: write
-    uses: ./.github/workflows/docsible.yml
+    uses: ./.github/workflows/template_docsible.yml
 
   # collection_tag:
   #   if: github.event.pull_request.merged == true
