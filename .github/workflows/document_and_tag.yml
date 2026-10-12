@@ -7,22 +7,22 @@ on:
       - closed
 
 jobs:
-  docsible:
-    if: github.event.pull_request.merged == true
-    permissions:
-      contents: write
-    uses: ./.github/workflows/template_docsible.yml
-    with:
-      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
-    secrets:
-      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
-
   collection_tag:
     if: github.event.pull_request.merged == true
     needs: docsible
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+    secrets:
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+
+  docsible:
+    if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
+    uses: ./.github/workflows/template_docsible.yml
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:

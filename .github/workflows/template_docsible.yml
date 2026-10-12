@@ -22,7 +22,7 @@ jobs:
         id: gh_token
         with:
           private-key: ${{ secrets.GitHubAppPrivateKey }}
-          app-id: ${{ inputs.GitHubAppId }}
+          client-id: ${{ inputs.GitHubAppId }}
       - name: Checkout Repository
         uses: actions/checkout@main
         with:
