@@ -13,7 +13,7 @@ jobs:
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then
-            pip3 install docsible
+            pip3 install docsible==0.8.0
           fi
         shell: bash
         working-directory: "${{ github.workspace }}"
