@@ -1,6 +1,5 @@
 name: Ansible Collection Docs, Tagging and Publishing
 on:
-  workflow_dispatch:
   pull_request:
     branches:
       - main
