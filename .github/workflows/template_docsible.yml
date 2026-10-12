@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@latest
+        uses: actions/checkout@main
       - name: Ensure docsible CLI is installed
         run: |
           if ! command -v docsible >/dev/null; then
