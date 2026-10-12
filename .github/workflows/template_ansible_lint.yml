@@ -10,13 +10,13 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@main
-      - name: Ensure ansible-lint CLI
-        run: |
-          if ! command -v ansible-lint >/dev/null; then
-            echo "ansible-lint CLI not found."
-            exit 1
-          fi
-        shell: bash
-        working-directory: "${{ github.workspace }}"
+      # - name: Ensure ansible-lint CLI
+      #   run: |
+      #     if ! command -v ansible-lint >/dev/null; then
+      #       echo "ansible-lint CLI not found."
+      #       exit 1
+      #     fi
+      #   shell: bash
+      #   working-directory: "${{ github.workspace }}"
       - name: Checking Ansible Formatting
         uses: ansible/ansible-lint@v26.9.0
