@@ -1,0 +1,18 @@
+---
+argument_specs:
+  main:
+    short_description: Get an access token for the Azure AD tenant.
+    description: Get an access token for the Azure AD tenant.
+    options:
+      tenant_id:
+        type: str
+        description: The tenant ID of the Azure AD tenant.
+        required: true
+      client_id:
+        type: str
+        description: The client ID of the Azure AD application.
+        required: true
+      client_secret:
+        type: str
+        description: The client secret of the Azure AD application.
+        required: true

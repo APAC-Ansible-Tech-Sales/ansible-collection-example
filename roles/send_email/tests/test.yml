@@ -1,0 +1,17 @@
+---
+# Make sure to export the roles location with the following command: export ANSIBLE_ROLES_PATH=../../../roles
+
+- name: Send Email with Graph API
+  hosts: localhost
+
+  vars:
+    ansible_connection: local
+    client_id: "<CLIENT_ID>"
+    sender_email: "sender@example.com"
+    recipient_email: "recipient@example.com"
+    email_subject: "Test"
+    email_body: "Test Email"
+
+  tasks:
+    - import_role:
+        name: send_email

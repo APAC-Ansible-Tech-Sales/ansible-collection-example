@@ -1,0 +1,15 @@
+# THIS FILE IS AUTO GENERATED #
+---
+# This file enables roles to be imported directly without using a collection import
+galaxy_info:
+  author: "Phil White"
+  description: "Collection for Microsoft Graph API"
+  license: "GPL-3.0-or-later"
+  min_ansible_version: "2.19.0"
+  platforms:
+    - name: "EL"
+      versions:
+        - all
+
+allow_duplicates: false
+dependencies: []

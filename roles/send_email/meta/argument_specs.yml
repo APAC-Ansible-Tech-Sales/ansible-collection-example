@@ -1,0 +1,45 @@
+---
+argument_specs:
+  main:
+    short_description: Send an email with the Microsoft Graph API.
+    description: Send an email with the Microsoft Graph API.
+    options:
+      client_id:
+        type: str
+        description: The client ID of the Azure AD application.
+        required: true
+      client_secret:
+        type: str
+        description: The client secret of the Azure AD application.
+        required: true
+      graph_access_token:
+        type: str
+        description: The access token for the Microsoft Graph API.
+        required: false
+      email_subject:
+        type: str
+        description: The subject of the email.
+        required: true
+      email_body:
+        type: str
+        description: The body of the email.
+        required: true
+      email_content_type:
+        type: str
+        description: The content type of the email.
+        required: false
+        default: "Text"
+        choices:
+          - "Text"
+          - "HTML"
+          - "RichText"
+          - "PlainText"
+          - "RichText"
+      sender_email:
+        type: str
+        description: The email address of the sender.
+        required: true
+      recipient_email:
+        type: str
+        description: The email address of the recipient.
+        required: true
