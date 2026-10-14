@@ -10,6 +10,7 @@ on:
 jobs:
   detect_new_semver_tag:
     name: Detect New SemVer Tag
+    if: github.event.pull_request.merged == false
     outputs:
       next_tag: ${{ steps.semver.outputs.next_tag }}
     permissions:
@@ -34,6 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
   stage_in_automation_hub:
     name: Stage in Automation Hub
+    if: github.event.pull_request.merged == false
     needs: detect_new_semver_tag
     permissions:
       contents: read
@@ -59,7 +61,6 @@ jobs:
     uses: ./.github/workflows/template_bump_semver.yml
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
-      Environment: staging
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   docsible:
