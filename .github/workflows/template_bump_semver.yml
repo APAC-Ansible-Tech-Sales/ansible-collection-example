@@ -47,7 +47,7 @@ jobs:
           fi
 
           # Trim dry-run / pre-release suffix (e.g. 1.2.3-dryrun -> 1.2.3)
-          SEMVER=$(echo "${{ steps.semver.outputs.next_tag }}" | cut -d '-' -f 1)
+          SEMVER=$(echo "${{ inputs.NextTag }}" | cut -d '-' -f 1)
           SEMVER="${SEMVER#v}"
 
           git config user.name "github-actions[bot]"
