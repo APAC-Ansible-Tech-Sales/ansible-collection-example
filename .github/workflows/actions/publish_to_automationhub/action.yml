@@ -19,11 +19,10 @@ runs:
   steps:
     - name: Install Galaxy requirements
       run: |
-        # Update token in ansible cfg
+        # Update token in ansible cfg, it expires every 30 days and the refresh should be automated
         sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubOfflineToken }}#g" ${{ github.action_path }}/ansible.cfg
         # Install collections
         ansible-galaxy collection install infra.aap_configuration
-        ansible-galaxy collection list
       shell: bash
       working-directory: ${{ github.action_path }}
 
@@ -31,7 +30,7 @@ runs:
       run: |
         ansible-playbook \
         '${{ github.action_path }}/playbook.yml' \
-        -e 'collection_path="${{ inputs.collection_path }}"' \
+        -e 'collection_path="${{ github.workspace }}"' \
         -e 'aap_hostname="${{ inputs.AAPHostname }}"' \
         -e "@${{ github.action_path }}/vault.yml" \
         --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
