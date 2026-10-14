@@ -1,17 +1,40 @@
-name: Ansible Collection Docs, Tag and Publish to Automation Hub
+name: Stage, Bump, Document and Publish to Automation Hub
 on:
   workflow_dispatch:
-  # pull_request:
-  #   branches:
-  #     - main
-  #   types:
-  #     - closed
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 jobs:
+  detect_new_semver_tag:
+    name: Detect New SemVer Tag
+    outputs:
+      next_tag: ${{ steps.semver.outputs.next_tag }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@main
+        id: gh_token
+        with:
+          private-key: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+          client-id: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+      - name: Checkout Repository
+        uses: actions/checkout@main
+        with:
+          token: ${{ steps.gh_token.outputs.token }}
+          fetch-depth: 0
+      - name: Get Next SemVer Tag
+        id: semver
+        uses: AcmeSoftwareLLC/semver-tag@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
   stage_in_automation_hub:
-    # if: github.event.pull_request.merged == true
     name: Stage in Automation Hub
-    environment: staging
+    needs: detect_new_semver_tag
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -25,22 +48,24 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: staging
-          CollectionVersion: ${{ github.sha }}
-  collection_tag:
-    # if: github.event.pull_request.merged == true
-    name: Tag Collection
+          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
+          Approve: false
+  bump_semver:
+    if: github.event.pull_request.merged == true
+    name: Bump Collection SemVer Tag
     needs: stage_in_automation_hub
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+      Environment: staging
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   docsible:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     name: Docsible
-    needs: collection_tag
+    needs: bump_semver
     permissions:
       contents: write
     uses: ./.github/workflows/template_docsible.yml
@@ -49,9 +74,11 @@ jobs:
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   publish_in_automation_hub:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     name: Publish in Automation Hub
-    needs: docsible
+    needs:
+      - docsible
+      - detect_new_semver_tag
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -65,3 +92,5 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: published
+          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
+          Approve: true
