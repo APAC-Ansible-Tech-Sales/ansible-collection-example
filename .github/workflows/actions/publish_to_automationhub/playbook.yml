@@ -43,7 +43,8 @@
       vars:
         aap_validate_certs: "{{ ah_validate_certs | default(true) }}"
         hub_auto_approve: false
-        hub_collections:
+        hub_repository: "{{ repository }}"
+        hub_custom_collections:
           - collection_name: "{{ name }}"
-            version: "{{ version }}"
+            collection_version: "{{ collection_version | default(version, true) }}"
             collection_local_path: "{{ collection_path }}"

@@ -1,14 +1,35 @@
 name: Ansible Collection Docs, Tag and Publish to Automation Hub
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
+  workflow_dispatch:
+  # pull_request:
+  #   branches:
+  #     - main
+  #   types:
+  #     - closed
 
 jobs:
+  stage_in_automation_hub:
+    # if: github.event.pull_request.merged == true
+    name: Stage in Automation Hub
+    environment: staging
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Publish Collection to Automation Hub
+        uses: ./.github/workflows/actions/publish_to_automationhub
+        with:
+          VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Contains the AAP Host password
+          RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
+          AAPHostname: ${{ vars.AAP_HOSTNAME }}
+          Repository: staging
+          CollectionVersion: ${{ github.sha }}
   collection_tag:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
+    name: Tag Collection
+    needs: stage_in_automation_hub
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
@@ -17,7 +38,8 @@ jobs:
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   docsible:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
+    name: Docsible
     needs: collection_tag
     permissions:
       contents: write
@@ -26,8 +48,9 @@ jobs:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
-  publish_to_automation_hub:
-    if: github.event.pull_request.merged == true
+  publish_in_automation_hub:
+    # if: github.event.pull_request.merged == true
+    name: Publish in Automation Hub
     needs: docsible
     permissions:
       contents: read
@@ -41,3 +64,4 @@ jobs:
           VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Contains the AAP Host password
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
+          Repository: published
