@@ -55,7 +55,6 @@ jobs:
   bump_semver:
     if: github.event.pull_request.merged == true
     name: Bump Collection SemVer Tag
-    needs: stage_in_automation_hub
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
@@ -79,7 +78,6 @@ jobs:
     name: Publish in Automation Hub
     needs:
       - docsible
-      - detect_new_semver_tag
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -93,5 +91,5 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: published
-          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
+          CollectionVersion: ${{ needs.bump_semver.outputs.next_tag }}
           Approve: true
