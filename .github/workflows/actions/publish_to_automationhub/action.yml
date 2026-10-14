@@ -1,14 +1,6 @@
 name: Publish to Automation Hub
 description: Publish Collection to Automation Hub
 inputs:
-  GitHubAppId:
-    type: string
-    description: "The id of the GitHub App"
-    required: true
-  GitHubAppPrivateKey:
-    type: secret
-    description: "The private key for the GitHub App"
-    required: true
   RedHatAutomationHubOfflineToken:
     type: secret
     description: "The offline token for Ansible"
