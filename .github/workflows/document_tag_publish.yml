@@ -50,11 +50,11 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: staging
-          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}-dev
+          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
           Approve: false
-  collection_tag:
+  bump_semver:
     # if: github.event.pull_request.merged == true
-    name: Tag Collection
+    name: Bump Collection SemVer Tag
     needs: stage_in_automation_hub
     permissions:
       contents: write
@@ -67,7 +67,7 @@ jobs:
   docsible:
     # if: github.event.pull_request.merged == true
     name: Docsible
-    needs: collection_tag
+    needs: bump_semver
     permissions:
       contents: write
     uses: ./.github/workflows/template_docsible.yml

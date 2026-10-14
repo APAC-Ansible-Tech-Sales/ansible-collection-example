@@ -69,13 +69,20 @@ jobs:
             git checkout main
             git reset --hard origin/main
 
-            if grep -q "^version: ${SEMVER}$" galaxy.yml; then
+            if grep -Eq "^version:[[:space:]]*[\"']?${SEMVER}[\"']?[[:space:]]*$" galaxy.yml; then
               echo "galaxy.yml already has version $SEMVER"
               exit 0
             fi
 
             echo "Updating galaxy.yml with version $SEMVER (attempt ${attempt})"
-            sed -i "s/^version: .*/version: ${SEMVER}/" galaxy.yml
+            sed -i -E "s/^version[[:space:]]*:[[:space:]]*[\"']?[^[:space:]\"'#]+[\"']?/version: ${SEMVER}/" galaxy.yml
+
+            if ! grep -Eq "^version:[[:space:]]*${SEMVER}[[:space:]]*$" galaxy.yml; then
+              echo "Failed to update version in galaxy.yml"
+              grep -n -E '^version' galaxy.yml || true
+              exit 1
+            fi
+
             git add galaxy.yml
             git commit -m "Bump galaxy version to $SEMVER"
 
