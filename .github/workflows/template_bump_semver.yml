@@ -11,7 +11,10 @@ on:
         description: "The id of the GitHub App"
         required: true
         type: string
-
+      NextTag:
+        description: "The next tag to use"
+        required: true
+        type: string
 jobs:
   bump_semver:
     name: Bump SemVer
@@ -28,16 +31,11 @@ jobs:
         with:
           token: ${{ steps.gh_token.outputs.token }}
           fetch-depth: 0
-      - name: Bump Version
-        id: semver
-        uses: AcmeSoftwareLLC/semver-tag@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag And Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a ${{ steps.semver.outputs.next_tag }} -m "Version ${{ steps.semver.outputs.next_tag }}"
+          git tag -a ${{ inputs.NextTag }} -m "Version ${{ inputs.NextTag }}"
           git push --tags
       - name: Bump Version in Galaxy Metadata
         run: |
