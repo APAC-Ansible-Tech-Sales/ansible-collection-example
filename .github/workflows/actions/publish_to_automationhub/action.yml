@@ -43,5 +43,5 @@ runs:
         -e "@${{ github.action_path }}/vault.yml" \
         -e 'repository="${{ inputs.Repository }}"' \
         -e 'collection_version="${{ inputs.CollectionVersion }}"' \
-        --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
+        --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}") -vvv
       shell: bash
