@@ -50,7 +50,7 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: staging
-          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}-${{ github.sha }}
+          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}-dev
           Approve: false
   collection_tag:
     # if: github.event.pull_request.merged == true
