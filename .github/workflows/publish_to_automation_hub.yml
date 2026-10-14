@@ -21,3 +21,4 @@ jobs:
         with:
           VaultPassword: ${{ secrets.ANSIBLE_VAULT }}
           RedHatAutomationHubOfflineToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
+          AAPHostname: ${{ vars.AAP_HOSTNAME }}

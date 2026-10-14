@@ -9,7 +9,7 @@ inputs:
     type: string
     description: "Vault decryption password"
     required: true
-  aap_instance:
+  AAPHostname:
     type: string
     description: "The AAP instance"
     default: "https://server.example.com"
@@ -27,12 +27,12 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
 
-    # - name: Execute playbook
-    #   run: |
-    #     ansible-playbook \
-    #     '${{ github.action_path }}/playbook.yml' \
-    #     -e 'collection_path="${{ inputs.collection_path }}"' \
-    #     -e 'aap_hostname="${{ inputs.aap_hostname }}"' \
-    #     -e "@${{ github.action_path }}/vault.yml" \
-    #     --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
-    #   shell: bash
+    - name: Run Playbook
+      run: |
+        ansible-playbook \
+        '${{ github.action_path }}/playbook.yml' \
+        -e 'collection_path="${{ inputs.collection_path }}"' \
+        -e 'aap_hostname="${{ inputs.AAPHostname }}"' \
+        -e "@${{ github.action_path }}/vault.yml" \
+        --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
+      shell: bash

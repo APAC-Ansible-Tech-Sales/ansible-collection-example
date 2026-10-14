@@ -5,6 +5,9 @@
   gather_facts: false
   vars:
     ansible_connection: local
+    aap_username: admin
+    aap_hostname: "{{ aap_hostname }}" # From GitHub Vars
+    aap_password: "{{ aap_password }}" # From .github/workflows/actions/publish_to_automationhub/vault.yml
 
   tasks:
     - name: Include Variables from Galaxy YAML
