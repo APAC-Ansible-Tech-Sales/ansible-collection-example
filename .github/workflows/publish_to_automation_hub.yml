@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - run: tree ${{ github.workspace }}
+      - run: tree ${{ github.workspace }}/.github/
       - name: Publish Collection to Automation Hub
         uses: ./.github/workflows/actions/publish_to_automationhub/action.yml
         with:
