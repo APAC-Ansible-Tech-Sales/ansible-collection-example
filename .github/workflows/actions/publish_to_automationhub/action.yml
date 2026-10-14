@@ -1,0 +1,46 @@
+name: Publish to Automation Hub
+description: Publish Collection to Automation Hub
+inputs:
+  GitHubAppId:
+    type: string
+    description: "The id of the GitHub App"
+    required: true
+  GitHubAppPrivateKey:
+    type: secret
+    description: "The private key for the GitHub App"
+    required: true
+  RedHatAutomationHubOfflineToken:
+    type: secret
+    description: "The offline token for Ansible"
+    required: true
+  VaultPassword:
+    type: string
+    description: "Vault decryption password"
+    required: true
+  aap_instance:
+    type: string
+    description: "The AAP instance"
+    default: "https://server.example.com"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Galaxy requirements
+      run: |
+        # Update token in ansible cfg
+        sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubOfflineToken }}#g" ${{ github.action_path }}/ansible.cfg
+        # Install collections
+        ansible-galaxy collection install infra.aap_configuration
+        ansible-galaxy collection list
+      shell: bash
+      working-directory: ${{ github.action_path }}
+
+    # - name: Execute playbook
+    #   run: |
+    #     ansible-playbook \
+    #     '${{ github.action_path }}/playbook.yml' \
+    #     -e 'collection_path="${{ inputs.collection_path }}"' \
+    #     -e 'aap_hostname="${{ inputs.aap_hostname }}"' \
+    #     -e "@${{ github.action_path }}/vault.yml" \
+    #     --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
+    #   shell: bash

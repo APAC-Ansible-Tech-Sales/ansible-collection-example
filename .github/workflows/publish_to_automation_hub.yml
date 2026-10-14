@@ -1,11 +1,11 @@
 name: Publish to Automation Hub
 on:
   workflow_dispatch: # Remove later
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
+  # pull_request:
+  #   branches:
+  #     - main
+  #   types:
+  #     - closed
 
 jobs:
   publish_to_pah:
@@ -18,9 +18,10 @@ jobs:
         uses: actions/checkout@main
         with:
           ref: main
-      # - name: Publish Collection to Automation Hub
-      #   uses: ./.github/workflows/actions/publish_to_automationhub/action.yml
-      #   with:
-      #     source_path: ${{ github.workspace }}
-      #     vault_password: ${{ secrets.ANSIBLE_VAULT_DECRYPTION_PASSWORD }}
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Collection to Automation Hub
+        uses: ./.github/workflows/actions/publish_to_automationhub/action.yml
+        with:
+          VaultPassword: ${{ secrets.ANSIBLE_VAULT }}
+          GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+          GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+          RedHatAutomationHubOfflineToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}

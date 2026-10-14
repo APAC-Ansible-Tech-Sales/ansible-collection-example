@@ -1,0 +1,46 @@
+---
+- name: Publish to Automation Hub
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    ansible_connection: local
+
+  tasks:
+    - name: Include Variables from Galaxy YAML
+      ansible.builtin.include_vars:
+        dir: "{{ source_path }}"
+        files_matching: galaxy.yml
+
+    - name: Show Details
+      ansible.builtin.debug:
+        msg: |
+          The following collection will be published:
+          Namespace: "{{ namespace }}"
+          Collection: "{{ name }}"
+          Version: "{{ version }}"
+
+    - name: Create Namespace If Required
+      ansible.builtin.include_role:
+        name: infra.aap_configuration.hub_namespace
+      vars:
+        aap_validate_certs: "{{ ah_validate_certs | default(true) }}"
+        hub_namespaces:
+          - name: "{{ namespace }}"
+            description: "{{ description }}"
+            company: "{{ company }}"
+            email: "{{ email }}"
+            avatar_url: "{{ avatar_url }}"
+            resources: "{{ resources }}"
+            links: "{{ links }}"
+
+    - name: Publish to Automation Hub
+      ansible.builtin.include_role:
+        name: infra.aap_configuration.hub_publish
+      vars:
+        aap_validate_certs: "{{ ah_validate_certs | default(true) }}"
+        ah_auto_approve: true
+        hub_collections:
+          - collection_name: "{{ name }}"
+            version: "{{ version }}"
+            collection_local_path: "{{ collection_path }}"
