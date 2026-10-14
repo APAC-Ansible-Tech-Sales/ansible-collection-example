@@ -54,11 +54,13 @@ jobs:
   bump_semver:
     if: github.event.pull_request.merged == true
     name: Bump Collection SemVer Tag
+    needs: detect_new_semver_tag
     permissions:
       contents: write
     uses: ./.github/workflows/template_bump_semver.yml
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+      NextTag: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   docsible:
