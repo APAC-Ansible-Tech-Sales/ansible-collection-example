@@ -12,7 +12,7 @@
   tasks:
     - name: Include Variables from Galaxy YAML
       ansible.builtin.include_vars:
-        dir: "{{ source_path }}"
+        dir: "{{ collection_path }}"
         files_matching: galaxy.yml
 
     - name: Show Details
