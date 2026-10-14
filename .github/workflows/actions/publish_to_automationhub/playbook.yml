@@ -31,11 +31,11 @@
         hub_namespaces:
           - name: "{{ namespace }}"
             description: "{{ description }}"
-            company: "{{ company }}"
-            email: "{{ email }}"
-            avatar_url: "{{ avatar_url }}"
-            resources: "{{ resources }}"
-            links: "{{ links }}"
+            company: "{{ company | default(omit) }}"
+            email: "{{ email | default(omit) }}"
+            avatar_url: "{{ avatar_url | default(omit) }}"
+            resources: "{{ resources | default(omit) }}"
+            links: "{{ links | default(omit) }}"
 
     - name: Publish to Automation Hub
       ansible.builtin.include_role:
