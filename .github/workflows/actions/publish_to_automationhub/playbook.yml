@@ -42,7 +42,7 @@
         name: infra.aap_configuration.hub_publish
       vars:
         aap_validate_certs: "{{ ah_validate_certs | default(true) }}"
-        ah_auto_approve: true
+        ah_auto_approve: false
         hub_collections:
           - collection_name: "{{ name }}"
             version: "{{ version }}"
