@@ -17,6 +17,7 @@
         files_matching: galaxy.yml
 
     - name: Require collection_version
+      when: not __publish_approve
       ansible.builtin.assert:
         that:
           - collection_version is defined
