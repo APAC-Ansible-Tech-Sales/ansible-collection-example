@@ -8,8 +8,6 @@
     aap_username: admin
     aap_hostname: "{{ aap_hostname }}" # From GitHub Vars
     aap_password: "{{ aap_password }}" # From .github/workflows/actions/publish_to_automationhub/vault.yml
-    # hub_publish treats hub_auto_approve=false as "approve in a follow-up task",
-    # so both true and false end up approving. Drive approval only via ah_collection.
     __publish_approve: "{{ approve | default(false) | bool }}"
 
   tasks:
@@ -18,22 +16,30 @@
         dir: "{{ collection_path }}"
         files_matching: galaxy.yml
 
+    - name: Require collection_version
+      ansible.builtin.assert:
+        that:
+          - collection_version is defined
+          - collection_version | length > 0
+        fail_msg: collection_version must be provided (do not use galaxy.yml version)
+
     - name: Set publish facts
       ansible.builtin.set_fact:
-        __publish_version: "{{ collection_version | default(version, true) }}"
+        __publish_version: "{{ collection_version | regex_replace('^v', '') }}"
         __publish_working_dir: "{{ aap_configuration_working_dir | default('/var/tmp') }}/{{ name }}"
 
     - name: Show Details
       ansible.builtin.debug:
         msg: |
-          The following collection will be published:
+          The following collection will be {{ __publish_approve | ternary('approved', 'published') }}:
           Namespace: {{ namespace }}
           Collection: {{ name }}
           Version: {{ __publish_version }}
-          Repository: {{ repository }}
+          Repository: {{ repository | default('staging') }}
           Approve: {{ __publish_approve }}
 
     - name: Create Namespace If Required
+      when: not __publish_approve
       ansible.builtin.include_role:
         name: infra.aap_configuration.hub_namespace
       vars:
@@ -48,6 +54,7 @@
             links: "{{ links | default(omit) }}"
 
     - name: Stage collection sources for build
+      when: not __publish_approve
       ansible.builtin.copy:
         src: "{{ collection_path }}/"
         dest: "{{ __publish_working_dir }}/"
@@ -55,13 +62,16 @@
         mode: "0700"
 
     - name: Set collection version for this publish
+      when:
+        - not __publish_approve
+        - __publish_version | length > 0
       ansible.builtin.lineinfile:
         path: "{{ __publish_working_dir }}/galaxy.yml"
         regexp: "^version:"
         line: "version: {{ __publish_version }}"
-      when: __publish_version | length > 0
 
     - name: Build collection
+      when: not __publish_approve
       ansible.hub.ah_build:
         path: "{{ __publish_working_dir }}"
         output_path: "{{ __publish_working_dir }}"
@@ -69,27 +79,47 @@
       register: __publish_build
 
     - name: Find built collection tarball
+      when: not __publish_approve
       ansible.builtin.find:
         paths: "{{ __publish_working_dir }}"
         patterns: "*.tar.gz"
       register: __publish_tarballs
 
-    - name: Publish collection
+    - name: Publish collection to staging
+      when:
+        - not __publish_approve
+        - __publish_tarballs.files | default([]) | length > 0
       ansible.hub.ah_collection:
         namespace: "{{ namespace }}"
         name: "{{ name }}"
         version: "{{ __publish_version }}"
         path: "{{ __publish_tarballs.files[0].path }}"
-        repository: "{{ repository }}"
-        auto_approve: "{{ __publish_approve }}"
+        repository: "{{ repository | default('staging') }}"
+        auto_approve: false
         overwrite_existing: true
         ah_host: "{{ aap_hostname | default(omit) }}"
         ah_username: "{{ aap_username | default(omit) }}"
         ah_password: "{{ aap_password | default(omit) }}"
         validate_certs: "{{ ah_validate_certs | default(true) }}"
-      when: __publish_tarballs.files | length > 0
 
     - name: Cleanup working dir
+      when: not __publish_approve
       ansible.builtin.file:
         path: "{{ __publish_working_dir }}"
         state: absent
+
+    # When approve=true, only approve the already-staged collection (no rebuild/republish).
+    - name: Approve collection
+      when: __publish_approve
+      ansible.hub.ah_approval:
+        namespace: "{{ namespace }}"
+        name: "{{ name }}"
+        version: "{{ __publish_version }}"
+        ah_host: "{{ aap_hostname | default(omit) }}"
+        ah_username: "{{ aap_username | default(omit) }}"
+        ah_password: "{{ aap_password | default(omit) }}"
+        validate_certs: "{{ ah_validate_certs | default(true) }}"
+      register: approval
+      retries: 3
+      delay: 2
+      until: not approval is failed

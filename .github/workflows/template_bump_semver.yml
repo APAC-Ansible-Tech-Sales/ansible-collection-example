@@ -62,6 +62,31 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # Replace the version: line by rewriting the file (more reliable than in-place sed).
+          set_galaxy_version() {
+            local semver="$1"
+            local file="galaxy.yml"
+            local tmp
+            tmp="$(mktemp)"
+
+            if ! awk -v ver="$semver" '
+              BEGIN { updated = 0 }
+              /^[[:space:]]*version[[:space:]]*:/ {
+                print "version: " ver
+                updated = 1
+                next
+              }
+              { print }
+              END { exit updated ? 0 : 1 }
+            ' "$file" > "$tmp"; then
+              rm -f "$tmp"
+              echo "No version: line found in ${file}" >&2
+              return 1
+            fi
+
+            mv "$tmp" "$file"
+          }
+
           # Remote main can move while this job runs (other merges/workflows).
           # Refresh, apply the bump on the latest tip, then rebase/retry on push races.
           for attempt in 1 2 3; do
@@ -69,17 +94,18 @@ jobs:
             git checkout main
             git reset --hard origin/main
 
-            if grep -Eq "^version:[[:space:]]*[\"']?${SEMVER}[\"']?[[:space:]]*$" galaxy.yml; then
+            current="$(awk -F': *' '/^[[:space:]]*version[[:space:]]*:/ { gsub(/["'\'' ]/, "", $2); print $2; exit }' galaxy.yml)"
+            if [ "$current" = "$SEMVER" ]; then
               echo "galaxy.yml already has version $SEMVER"
               exit 0
             fi
 
-            echo "Updating galaxy.yml with version $SEMVER (attempt ${attempt})"
-            sed -i -E "s/^version[[:space:]]*:[[:space:]]*[\"']?[^[:space:]\"'#]+[\"']?/version: ${SEMVER}/" galaxy.yml
+            echo "Updating galaxy.yml with version $SEMVER (attempt ${attempt}; was ${current:-unknown})"
+            set_galaxy_version "$SEMVER"
 
-            if ! grep -Eq "^version:[[:space:]]*${SEMVER}[[:space:]]*$" galaxy.yml; then
-              echo "Failed to update version in galaxy.yml"
-              grep -n -E '^version' galaxy.yml || true
+            current="$(awk -F': *' '/^[[:space:]]*version[[:space:]]*:/ { gsub(/["'\'' ]/, "", $2); print $2; exit }' galaxy.yml)"
+            if [ "$current" != "$SEMVER" ]; then
+              echo "Failed to update version in galaxy.yml (found: ${current:-none})"
               exit 1
             fi
 
