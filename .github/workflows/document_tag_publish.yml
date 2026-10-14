@@ -25,6 +25,7 @@ jobs:
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: staging
           CollectionVersion: ${{ github.sha }}
+          Approve: false
   collection_tag:
     # if: github.event.pull_request.merged == true
     name: Tag Collection
@@ -65,3 +66,4 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: published
+          Approve: true

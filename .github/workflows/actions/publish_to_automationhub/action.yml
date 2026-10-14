@@ -21,6 +21,10 @@ inputs:
     type: string
     description: "The collection version"
     default: ""
+  Approve:
+    type: boolean
+    description: "Whether to approve the collection after upload"
+    default: false
 
 runs:
   using: composite
@@ -30,7 +34,7 @@ runs:
         # Update token in ansible cfg, it expires every 30 days and the refresh should be automated
         sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubToken }}#g" ${{ github.action_path }}/ansible.cfg
         # Install collections
-        ansible-galaxy collection install infra.aap_configuration
+        ansible-galaxy collection install infra.aap_configuration ansible.hub
       shell: bash
       working-directory: ${{ github.action_path }}
 
@@ -43,5 +47,6 @@ runs:
         -e "@${{ github.action_path }}/vault.yml" \
         -e 'repository="${{ inputs.Repository }}"' \
         -e 'collection_version="${{ inputs.CollectionVersion }}"' \
+        -e 'approve=${{ inputs.Approve }}' \
         --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}") -vvv
       shell: bash
