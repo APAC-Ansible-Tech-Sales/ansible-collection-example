@@ -1,6 +1,0 @@
----
-collections:
-  - name: https://github.com/technology-services-and-platforms-accnz/ansible-collection-aap-tools.git
-    version: 1.0.17
-    type: git
-  # - name: infra.ah_configuration
