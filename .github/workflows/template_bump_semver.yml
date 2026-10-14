@@ -15,8 +15,6 @@ on:
 jobs:
   bump_semver:
     name: Bump SemVer
-    outputs:
-      next_tag: ${{ steps.semver.outputs.next_tag }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App Token
