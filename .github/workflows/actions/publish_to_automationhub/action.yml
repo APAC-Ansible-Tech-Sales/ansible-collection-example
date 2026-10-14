@@ -1,7 +1,7 @@
 name: Publish to Automation Hub
 description: Publish Collection to Automation Hub
 inputs:
-  RedHatAutomationHubOfflineToken:
+  RedHatAutomationHubToken:
     type: secret
     description: "The offline token for Ansible"
     required: true
@@ -20,7 +20,7 @@ runs:
     - name: Install Galaxy requirements
       run: |
         # Update token in ansible cfg, it expires every 30 days and the refresh should be automated
-        sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubOfflineToken }}#g" ${{ github.action_path }}/ansible.cfg
+        sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubToken }}#g" ${{ github.action_path }}/ansible.cfg
         # Install collections
         ansible-galaxy collection install infra.aap_configuration
       shell: bash
