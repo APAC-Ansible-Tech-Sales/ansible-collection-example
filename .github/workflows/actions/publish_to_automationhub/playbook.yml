@@ -46,6 +46,6 @@
         hub_repository: staging
         hub_custom_collections:
           - collection_name: "{{ name }}"
-            collection_version: "{{ collection_version | default(version, true) }}"
+            collection_version: "{{ collection_version }}"
             collection_local_path: "{{ collection_path }}"
             overwrite_existing: true
