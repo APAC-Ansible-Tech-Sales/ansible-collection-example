@@ -1,0 +1,43 @@
+name: Ansible Collection Docs, Tag and Publish to Automation Hub
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  collection_tag:
+    if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
+    uses: ./.github/workflows/template_bump_semver.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+    secrets:
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+  docsible:
+    if: github.event.pull_request.merged == true
+    needs: collection_tag
+    permissions:
+      contents: write
+    uses: ./.github/workflows/template_docsible.yml
+    with:
+      GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+    secrets:
+      GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+  publish_to_automation_hub:
+    if: github.event.pull_request.merged == true
+    needs: docsible
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Publish Collection to Automation Hub
+        uses: ./.github/workflows/actions/publish_to_automationhub
+        with:
+          VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Contains the AAP Host password
+          RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
+          AAPHostname: ${{ vars.AAP_HOSTNAME }}
