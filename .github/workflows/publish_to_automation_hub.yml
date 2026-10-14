@@ -1,6 +1,5 @@
 name: Publish to Automation Hub
 on:
-  workflow_dispatch: # Remove later
   pull_request:
     branches:
       - main
@@ -8,19 +7,17 @@ on:
       - closed
 
 jobs:
-  publish_to_pah:
-    # if: github.event.pull_request.merged == true
+  publish_to_automation_hub:
+    if: github.event.pull_request.merged == true
     permissions:
       contents: read
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@main
+      - name: Publish Collection to Automation Hub
+        uses: ./.github/workflows/actions/publish_to_automationhub
         with:
-          ref: main
-      # - name: Publish Collection to Automation Hub
-      #   uses: ./.github/workflows/actions/publish_to_automationhub/action.yml
-      #   with:
-      #     source_path: ${{ github.workspace }}
-      #     vault_password: ${{ secrets.ANSIBLE_VAULT_DECRYPTION_PASSWORD }}
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+          VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Contains the AAP Host password
+          RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
+          AAPHostname: ${{ vars.AAP_HOSTNAME }}
