@@ -28,7 +28,7 @@ jobs:
           token: ${{ steps.gh_token.outputs.token }}
           ref: main
           fetch-depth: 0
-      - name: Bump Version
+      - name: Get Next SemVer Tag
         id: semver
         uses: AcmeSoftwareLLC/semver-tag@main
         with:
