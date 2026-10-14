@@ -27,6 +27,8 @@ jobs:
         uses: actions/checkout@main
         with:
           token: ${{ steps.gh_token.outputs.token }}
+          ref: main
+          fetch-depth: 0
       - name: Bump Version
         id: semver
         uses: AcmeSoftwareLLC/semver-tag@main
@@ -40,6 +42,8 @@ jobs:
           git push --tags
       - name: Bump Version in Galaxy Metadata
         run: |
+          set -euo pipefail
+
           if [ ! -f galaxy.yml ]; then
             echo "galaxy.yml does not exist."
             exit 1
@@ -49,17 +53,35 @@ jobs:
           SEMVER=$(echo "${{ steps.semver.outputs.next_tag }}" | cut -d '-' -f 1)
           SEMVER="${SEMVER#v}"
 
-          if grep -q "^version: ${SEMVER}$" galaxy.yml; then
-            echo "galaxy.yml already has version $SEMVER"
-            exit 0
-          fi
-
-          echo "Updating galaxy.yml with version $SEMVER"
-          sed -i "s/^version: .*/version: ${SEMVER}/" galaxy.yml
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Bump galaxy version to $SEMVER"
-          git push
+
+          # Remote main can move while this job runs (other merges/workflows).
+          # Refresh, apply the bump on the latest tip, then rebase/retry on push races.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+
+            if grep -q "^version: ${SEMVER}$" galaxy.yml; then
+              echo "galaxy.yml already has version $SEMVER"
+              exit 0
+            fi
+
+            echo "Updating galaxy.yml with version $SEMVER (attempt ${attempt})"
+            sed -i "s/^version: .*/version: ${SEMVER}/" galaxy.yml
+            git add galaxy.yml
+            git commit -m "Bump galaxy version to $SEMVER"
+
+            if git pull --rebase origin main && git push origin main; then
+              exit 0
+            fi
+
+            echo "Push rejected; retrying against latest main..."
+            sleep 2
+          done
+
+          echo "Failed to push galaxy.yml version bump after retries"
+          exit 1
         shell: bash
         working-directory: "${{ github.workspace }}"
