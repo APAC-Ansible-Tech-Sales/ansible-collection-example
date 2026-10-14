@@ -2,7 +2,7 @@
 
 namespace: adoption_architects
 name: microsoft_graph
-version: 
+version: 1.0.25
 readme: README.md
 authors:
   - Phil White (github.com/phwhite-redhat)
