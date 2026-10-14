@@ -35,6 +35,7 @@ jobs:
     uses: ./.github/workflows/template_bump_semver.yml
     with:
       GitHubAppId: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+      Environment: staging
     secrets:
       GitHubAppPrivateKey: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
   docsible:

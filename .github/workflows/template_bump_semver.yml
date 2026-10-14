@@ -11,11 +11,17 @@ on:
         description: "The id of the GitHub App"
         required: true
         type: string
+      Environment:
+        description: "GitHub Actions environment name"
+        required: false
+        type: string
+        default: staging
 
 jobs:
   bump_semver:
     name: Bump SemVer
     runs-on: ubuntu-latest
+    environment: ${{ inputs.Environment }}
     steps:
       - name: Generate GitHub App Token
         uses: actions/create-github-app-token@main
