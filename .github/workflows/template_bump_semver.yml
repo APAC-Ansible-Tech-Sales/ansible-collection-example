@@ -33,7 +33,6 @@ jobs:
         uses: actions/checkout@main
         with:
           token: ${{ steps.gh_token.outputs.token }}
-          ref: main
           fetch-depth: 0
       - name: Bump Version
         id: semver
