@@ -10,7 +10,6 @@ on:
 jobs:
   detect_new_semver_tag:
     name: Detect New SemVer Tag
-    if: github.event.pull_request.merged == false
     outputs:
       next_tag: ${{ steps.semver.outputs.next_tag }}
     permissions:
@@ -78,6 +77,7 @@ jobs:
     name: Publish in Automation Hub
     needs:
       - docsible
+      - detect_new_semver_tag
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -91,5 +91,5 @@ jobs:
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBOFFLINETOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
           Repository: published
-          CollectionVersion: ${{ needs.bump_semver.outputs.next_tag }}
+          CollectionVersion: ${{ needs.detect_new_semver_tag.outputs.next_tag }}
           Approve: true
