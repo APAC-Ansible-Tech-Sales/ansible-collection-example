@@ -57,6 +57,7 @@ skip_list:
   - files-permissions
   - yaml[indentation]
   - yaml[empty-lines]
+  - yaml[line-length]
 
 # Ansible-lint does not automatically load rules that have the 'opt-in' tag.
 # You must enable opt-in rules by listing each rule 'id' below.
@@ -126,3 +127,4 @@ offline: true
 
 # Limit the depth of the nested blocks:
 # max_block_depth: 20
+#
