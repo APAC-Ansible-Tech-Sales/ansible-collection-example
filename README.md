@@ -6,7 +6,7 @@
 
 **Name**: microsoft_graph
 
-**Version**: 1.0.28
+**Version**: 1.0.29
 
 **Authors**:
 
@@ -14,7 +14,7 @@
 
 ## Description
 
-Collection for Microsoft Graph API
+Collection for Microsoft Graph
 
 
 
