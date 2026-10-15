@@ -67,7 +67,9 @@ jobs:
   publish_in_automation_hub:
     # if: github.event.pull_request.merged == true
     name: Publish in Automation Hub
-    needs: docsible
+    needs:
+      - docsible
+      - get_new_semver_tag
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -80,6 +82,4 @@ jobs:
           VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Vault contains the AAP Host password
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBTOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
-          Repository: published
           CollectionVersion: ${{ needs.get_new_semver_tag.outputs.next_tag }}
-          Approve: true
