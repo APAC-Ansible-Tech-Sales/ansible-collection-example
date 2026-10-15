@@ -48,5 +48,5 @@ runs:
         -e 'repository="${{ inputs.Repository }}"' \
         -e 'collection_version="${{ inputs.CollectionVersion }}"' \
         -e 'approve=${{ inputs.Approve }}' \
-        --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}") -vvv
+        --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
       shell: bash
