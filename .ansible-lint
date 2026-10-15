@@ -126,4 +126,3 @@ offline: true
 
 # Limit the depth of the nested blocks:
 # max_block_depth: 20
-#
