@@ -1,5 +1,5 @@
 
 collections:
   - name: adoption_architects.microsoft_graph
-    source: published
+    source: https://aap-aap.apps.cluster-zm92w.dyn.redhatworkshops.io/api/galaxy/
     version: 1.0.26
