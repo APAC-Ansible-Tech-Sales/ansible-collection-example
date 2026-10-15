@@ -4,9 +4,9 @@ collections:
   - name: adoption_architects.microsoft_graph
     type: git
     source: https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-example.git
-    version: feature/branch-fix
+    version: philw/workflow3
 
 # Comment this out to test from github
   # - name: adoption_architects.microsoft_graph
   #   source: https://aap-aap.apps.cluster-zm92w.dyn.redhatworkshops.io/api/galaxy/
-  #   version: 1.0.29
+  #   version: 1.0.1
