@@ -46,5 +46,5 @@
         hub_collections:
           - collection_name: "{{ name }}"
             collection_version: "{{ collection_version }}"
-            version: "{{ version }}"
+            version: "{{ collection_version }}"
             collection_local_path: "{{ collection_path }}"
