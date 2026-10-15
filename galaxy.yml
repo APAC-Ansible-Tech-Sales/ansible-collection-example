@@ -6,7 +6,7 @@ version: 1.0.28
 readme: README.md
 authors:
   - Phil White (github.com/phwhite-redhat)
-description: Collection for Microsoft Graph API
+description: Collection for Microsoft Graph
 license:
   - "GPL-3.0-or-later"
 tags:
