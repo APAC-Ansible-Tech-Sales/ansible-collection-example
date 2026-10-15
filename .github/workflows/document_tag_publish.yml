@@ -17,20 +17,22 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     steps:
-      # - name: Generate GitHub App Token
-      #   uses: actions/create-github-app-token@main
-      #   id: gh_token
-      #   with:
-      #     private-key: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
-      #     client-id: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@main
+        id: gh_token
+        with:
+          private-key: ${{ secrets.ANSIBLECOLLECTIONSREPOPUSHPRIVATEKEY }}
+          client-id: ${{ vars.ANSIBLECOLLECTIONSREPOPUSHAPPID }}
       - name: Checkout Repository
         uses: actions/checkout@main
         with:
-          # token: ${{ steps.gh_token.outputs.token }}
+          token: ${{ steps.gh_token.outputs.token }}
           fetch-depth: 0
       - name: Set First Tag if Required    
         run: |
           if [ -z "$(git tag -l --points-at HEAD)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git tag -a v1.0.0 -m "Initial tag"
             git push origin v1.0.0
           fi
@@ -65,9 +67,7 @@ jobs:
   publish_in_automation_hub:
     # if: github.event.pull_request.merged == true
     name: Publish in Automation Hub
-    needs:
-      - docsible
-      - get_new_semver_tag
+    needs: docsible
     permissions:
       contents: read
     runs-on: ubuntu-latest
