@@ -28,6 +28,12 @@ jobs:
         with:
           # token: ${{ steps.gh_token.outputs.token }}
           fetch-depth: 0
+      - name: Set First Tag if Required    
+        run: |
+          if [ -z "$(git tag -l --points-at HEAD)" ]; then
+            git tag -a v1.0.0 -m "Initial tag"
+            git push origin v1.0.0
+          fi
       - name: Get Next SemVer Tag
         id: semver
         uses: AcmeSoftwareLLC/semver-tag@main
