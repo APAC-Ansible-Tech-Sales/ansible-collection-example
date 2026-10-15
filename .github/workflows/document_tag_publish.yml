@@ -1,6 +1,6 @@
 name: Stage, Bump, Document and Publish to Automation Hub
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Remove later
   pull_request:
     branches:
       - main
