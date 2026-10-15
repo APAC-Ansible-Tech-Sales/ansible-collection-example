@@ -27,8 +27,7 @@ jobs:
         uses: actions/checkout@main
         with:
           token: ${{ steps.gh_token.outputs.token }}
-          # Use the target branch tip (not the PR event SHA) so we include
-          # commits from earlier jobs like semver bump.
+          # Includes commits from earlier jobs
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
       - name: Ensure docsible CLI is installed
         run: |
