@@ -1,0 +1,4 @@
+
+collections:
+  - name: adoption_architects.microsoft_graph
+    version: 1.0.26

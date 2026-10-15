@@ -1,0 +1,10 @@
+---
+- name: Get EntraID Access Token
+  hosts: localhost
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: Get EntarID Access Token
+      ansible.builtin.import_role:
+        name: adoption_architects.microsoft_graph.auth_get_access_token
