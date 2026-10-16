@@ -38,6 +38,10 @@ jobs:
           git tag -a ${{ inputs.NextTag }} -m "Version ${{ inputs.NextTag }}"
           git push --tags
       - name: Bump Version in Galaxy Metadata
+        env:
+          # Commit on the branch that triggered this run (not hardcoded main).
+          # pull_request events use the base branch; workflow_dispatch uses the selected ref.
+          BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
         run: |
           set -euo pipefail
 
@@ -78,12 +82,12 @@ jobs:
             mv "$tmp" "$file"
           }
 
-          # Remote main can move while this job runs (other merges/workflows).
+          # Remote branch can move while this job runs (other merges/workflows).
           # Refresh, apply the bump on the latest tip, then rebase/retry on push races.
           for attempt in 1 2 3; do
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
+            git fetch origin "$BRANCH"
+            git checkout "$BRANCH"
+            git reset --hard "origin/$BRANCH"
 
             current="$(awk -F': *' '/^[[:space:]]*version[[:space:]]*:/ { gsub(/["'\'' ]/, "", $2); print $2; exit }' galaxy.yml)"
             if [ "$current" = "$SEMVER" ]; then
@@ -91,7 +95,7 @@ jobs:
               exit 0
             fi
 
-            echo "Updating galaxy.yml with version $SEMVER (attempt ${attempt}; was ${current:-unknown})"
+            echo "Updating galaxy.yml with version $SEMVER on ${BRANCH} (attempt ${attempt}; was ${current:-unknown})"
             set_galaxy_version "$SEMVER"
 
             current="$(awk -F': *' '/^[[:space:]]*version[[:space:]]*:/ { gsub(/["'\'' ]/, "", $2); print $2; exit }' galaxy.yml)"
@@ -103,11 +107,11 @@ jobs:
             git add galaxy.yml
             git commit -m "Bump galaxy version to $SEMVER"
 
-            if git pull --rebase origin main && git push origin main; then
+            if git pull --rebase "origin" "$BRANCH" && git push origin "$BRANCH"; then
               exit 0
             fi
 
-            echo "Push rejected; retrying against latest main..."
+            echo "Push rejected; retrying against latest ${BRANCH}..."
             sleep 2
           done
 
