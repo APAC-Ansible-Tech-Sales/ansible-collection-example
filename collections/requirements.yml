@@ -4,7 +4,7 @@ collections:
   - name: adoption_architects.microsoft_graph
     type: git
     source: https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-example.git
-    version: philw/workflow3
+    version: philw/update1
 
 # Comment this out to test from github
   # - name: adoption_architects.microsoft_graph
