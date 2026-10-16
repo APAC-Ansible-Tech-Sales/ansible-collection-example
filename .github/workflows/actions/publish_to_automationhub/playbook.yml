@@ -7,7 +7,7 @@
     ansible_connection: local
     aap_username: admin
     aap_hostname: "{{ aap_hostname }}" # From GitHub Vars
-    # aap_password: "{{ aap_password }}" # From .github/workflows/actions/publish_to_automationhub/vault.yml # Use short lived tokens in production cluster instead of username/password
+    aap_password: "{{ aap_password }}" # From .github/workflows/actions/publish_to_automationhub/vault.yml # Use short lived tokens in production cluster instead of username/password
 
   tasks:
     - name: Include Variables from Galaxy YAML
