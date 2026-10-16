@@ -6,7 +6,7 @@
 
 **Name**: microsoft_graph
 
-**Version**: 1.0.14
+**Version**: 1.0.15
 
 **Authors**:
 
