@@ -38,10 +38,6 @@ jobs:
           git tag -a ${{ inputs.NextTag }} -m "Version ${{ inputs.NextTag }}"
           git push --tags
       - name: Bump Version in Galaxy Metadata
-        env:
-          # Commit on the branch that triggered this run (not hardcoded main).
-          # pull_request events use the base branch; workflow_dispatch uses the selected ref.
-          BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
         run: |
           set -euo pipefail
 
