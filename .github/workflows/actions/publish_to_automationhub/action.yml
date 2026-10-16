@@ -13,10 +13,10 @@ inputs:
     type: string
     description: "The AAP instance"
     default: "https://server.example.com"
-  CollectionVersion:
-    type: string
-    description: "The collection version to publish or approve"
-    required: true
+  # CollectionVersion:
+  #   type: string
+  #   description: "The collection version to publish or approve"
+  #   required: true
 
 runs:
   using: composite
@@ -34,7 +34,7 @@ runs:
       run: |
         ansible-playbook \
         '${{ github.action_path }}/playbook.yml' \
-        -e 'collection_path="${{ github.workspace }}"' \
+        # -e 'collection_path="${{ github.workspace }}"' \
         -e 'aap_hostname="${{ inputs.AAPHostname }}"' \
         -e 'collection_version="${{ inputs.CollectionVersion }}"' \
         -e "@${{ github.action_path }}/vault.yml" \

@@ -21,7 +21,7 @@
           The following collection will be published:
           Namespace: "{{ namespace }}"
           Collection: "{{ name }}"
-          Version: "{{ collection_version }}"
+          Version: "{{ version }}"
 
     - name: Create Namespace If Required
       ansible.builtin.include_role:
@@ -45,5 +45,5 @@
         hub_auto_approve: true
         hub_collections:
           - collection_name: "{{ name }}"
-            version: "{{ collection_version }}"
+            version: "{{ version }}"
             collection_local_path: "{{ collection_path }}"

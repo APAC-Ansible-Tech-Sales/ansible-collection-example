@@ -82,4 +82,4 @@ jobs:
           VaultPassword: ${{ secrets.ANSIBLE_VAULT }} # Vault contains the AAP Host password
           RedHatAutomationHubToken: ${{ secrets.REDHATAUTOMATIONHUBTOKEN }}
           AAPHostname: ${{ vars.AAP_HOSTNAME }}
-          CollectionVersion: ${{ needs.get_new_semver_tag.outputs.next_tag }}
+          # CollectionVersion: ${{ needs.get_new_semver_tag.outputs.next_tag }}
