@@ -8,7 +8,7 @@
 Role belongs to adoption_architects/microsoft_graph
 Namespace - adoption_architects
 Collection - microsoft_graph
-Version - 1.0.6
+Version - 1.0.7
 Repository - https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc
 ```
 
