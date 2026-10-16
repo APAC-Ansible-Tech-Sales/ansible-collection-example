@@ -34,9 +34,9 @@ runs:
       run: |
         ansible-playbook \
         '${{ github.action_path }}/playbook.yml' \
-        # -e 'collection_path="${{ github.workspace }}"' \
+        -e 'collection_path="${{ github.workspace }}"' \
         -e 'aap_hostname="${{ inputs.AAPHostname }}"' \
-        -e 'collection_version="${{ inputs.CollectionVersion }}"' \
+        # -e 'collection_version="${{ inputs.CollectionVersion }}"' \
         -e "@${{ github.action_path }}/vault.yml" \
         --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
       shell: bash
