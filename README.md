@@ -6,7 +6,7 @@
 
 **Name**: microsoft_graph
 
-**Version**: 1.0.8
+**Version**: 1.0.16
 
 **Authors**:
 
@@ -20,13 +20,13 @@ Collection for Microsoft Graph
 
 ## Roles
 
-### [auth_get_access_token](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/main/roles/auth_get_access_token)
+### [auth_get_access_token](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/philw/workflow11/roles/auth_get_access_token)
 
-### [send_email](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/main/roles/send_email)
+### [send_email](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/philw/workflow11/roles/send_email)
 
 ## Roles vars
 
-# [auth_get_access_token](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/main/roles/auth_get_access_token)
+# [auth_get_access_token](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/philw/workflow11/roles/auth_get_access_token)
 ## auth_get_access_token Description:
 Get an access token for the EntraID tenant.
 
@@ -83,7 +83,7 @@ Get an access token for the EntraID tenant.
 
 
 
-# [send_email](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/main/roles/send_email)
+# [send_email](https://github.com/APAC-Ansible-Tech-Sales/ansible-collection-sdlc/tree/philw/workflow11/roles/send_email)
 ## send_email Description:
 Send an email using the Microsoft Graph API.
 

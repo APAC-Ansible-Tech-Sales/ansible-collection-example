@@ -13,10 +13,6 @@ inputs:
     type: string
     description: "The AAP instance"
     default: "https://server.example.com"
-  CollectionVersion:
-    type: string
-    description: "The collection version to publish or approve"
-    required: true
 
 runs:
   using: composite
@@ -36,7 +32,6 @@ runs:
         '${{ github.action_path }}/playbook.yml' \
         -e 'collection_path="${{ github.workspace }}"' \
         -e 'aap_hostname="${{ inputs.AAPHostname }}"' \
-        -e 'collection_version="${{ inputs.CollectionVersion }}"' \
         -e "@${{ github.action_path }}/vault.yml" \
         --vault-password-file <(cat <<<"${{ inputs.VaultPassword }}")
       shell: bash
