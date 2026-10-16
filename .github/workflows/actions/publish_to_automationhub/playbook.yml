@@ -45,6 +45,5 @@
         hub_auto_approve: true
         hub_collections:
           - collection_name: "{{ name }}"
-            collection_version: "{{ collection_version }}"
             version: "{{ collection_version }}"
             collection_local_path: "{{ collection_path }}"
