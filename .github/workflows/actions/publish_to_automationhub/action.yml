@@ -18,13 +18,16 @@ runs:
   using: composite
   steps:
     - name: Install Galaxy requirements
+      env:
+        ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_CERTIFIED_URL: https://console.redhat.com/api/automation-hub/content/published/
+        ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_CERTIFIED_AUTH_URL: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+        ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_CERTIFIED_TOKEN: ${{ secrets.REDHATAUTOMATIONHUBTOKEN }}
+        ANSIBLE_GALAXY_SERVER_UPSTREAM_GALAXY_URL: https://galaxy.ansible.com
+        ANSIBLE_GALAXY_SERVER_LIST: automation_hub_certified,upstream_galaxy
       run: |
-        # Update token in ansible cfg, it expires every 30 days and the refresh should be automated
-        sed -i "s#token = <REPLACED_WITH_SECRET>#token = ${{ inputs.RedHatAutomationHubToken }}#g" ${{ github.action_path }}/ansible.cfg
-        # Install collections
-        ansible-galaxy collection install infra.aap_configuration
+        ansible-galaxy collection install ansible.controller infra.aap_configuration
       shell: bash
-      working-directory: ${{ github.action_path }}
+      working-directory: ${{ github.workspace }}
 
     - name: Run Playbook
       run: |
