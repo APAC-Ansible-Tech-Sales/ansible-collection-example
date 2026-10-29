@@ -1,0 +1,39 @@
+---
+- name: Verify token can access Microsoft Graph
+  hosts: molecule
+  gather_facts: false
+  vars:
+    tenant_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_TENANT_ID') }}"
+    client_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_SECRET') }}"
+  tasks:
+    - name: Acquire Microsoft Graph access token
+      ansible.builtin.include_role:
+        name: auth_get_access_token
+
+    - name: Assert access token was returned
+      ansible.builtin.assert:
+        that:
+          - graph_token_response is defined
+          - graph_token_response.json.access_token is defined
+          - graph_token_response.json.access_token | length > 0
+          - graph_token_response.json.token_type | lower == 'bearer'
+        fail_msg: auth_get_access_token did not return a Bearer access token
+      no_log: true
+
+    - name: Call Microsoft Graph with the acquired token
+      ansible.builtin.uri:
+        url: https://graph.microsoft.com/v1.0/
+        method: GET
+        headers:
+          Authorization: "Bearer {{ graph_token_response.json.access_token }}"
+        status_code: [200]
+        return_content: true
+      register: graph_root_response
+      no_log: true
+
+    - name: Assert Graph accepted the token
+      ansible.builtin.assert:
+        that:
+          - graph_root_response.status == 200
+        fail_msg: Microsoft Graph rejected the token from auth_get_access_token

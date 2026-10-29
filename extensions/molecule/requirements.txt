@@ -1,0 +1,5 @@
+# Controller-side packages for Molecule Docker scenarios
+molecule>=24.2.0
+ansible-core>=2.19.0
+# community.docker modules need the Docker SDK on the controller
+docker>=7.0.0

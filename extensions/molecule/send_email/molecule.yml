@@ -1,0 +1,39 @@
+---
+# Required env vars:
+#   MOLECULE_TENANT_ID
+#   MOLECULE_CLIENT_ID
+#   MOLECULE_CLIENT_SECRET
+#   MOLECULE_SENDER_EMAIL   (mailbox with Mail.Send permission)
+#   MOLECULE_RECIPIENT_EMAIL (null/discard address for safe testing)
+dependency:
+  name: galaxy
+  options:
+    # Absolute via MOLECULE_SCENARIO_DIRECTORY — relative paths are resolved from CWD
+    # and were reported as missing by both Roles and Collections invokers.
+    requirements-file: ${MOLECULE_SCENARIO_DIRECTORY}/../shared/requirements.yml
+    role-file: ${MOLECULE_SCENARIO_DIRECTORY}/../shared/roles-requirements.yml
+platforms:
+  - name: molecule-send-email
+    # Python image so ansible modules (uri) can run via community.docker.docker
+    image: python:3.12-bookworm
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../shared/create.yml
+    destroy: ../shared/destroy.yml
+  env:
+    # Collection root is MOLECULE_PROJECT_DIRECTORY in extensions/molecule mode.
+    # Bare role names (and send_email → auth_get_access_token) resolve via this path.
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles
+scenario:
+  # No cleanup.yml — omit cleanup from the sequence to avoid "missing playbook".
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible

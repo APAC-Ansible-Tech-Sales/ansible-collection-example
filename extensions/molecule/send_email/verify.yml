@@ -1,0 +1,26 @@
+---
+- name: Verify send_email delivers to a null recipient
+  hosts: molecule
+  gather_facts: false
+  vars:
+    tenant_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_TENANT_ID') }}"
+    client_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_SECRET') }}"
+    sender_email: "{{ lookup('ansible.builtin.env', 'MOLECULE_SENDER_EMAIL') }}"
+    recipient_email: "{{ lookup('ansible.builtin.env', 'MOLECULE_RECIPIENT_EMAIL') }}"
+    email_subject: "Molecule send_email null-recipient verify"
+    email_body: "Verify step — null recipient via Microsoft Graph."
+  tasks:
+    - name: Send email to null recipient via Graph
+      ansible.builtin.include_role:
+        name: send_email
+
+    - name: Assert Graph accepted the sendMail request
+      ansible.builtin.assert:
+        that:
+          - send_mail_response is defined
+          - send_mail_response.status == 202
+        fail_msg: >
+          send_email did not receive HTTP 202 from Microsoft Graph when
+          sending to the null recipient ({{ recipient_email }})
+      no_log: true

@@ -1,0 +1,4 @@
+---
+# No Galaxy roles are required; file exists so Molecule's galaxy Roles
+# invoker does not report "missing".
+[]

@@ -1,0 +1,32 @@
+---
+- name: Fail if molecule group is missing
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Assert molecule group exists
+      ansible.builtin.assert:
+        that: "'molecule' in groups"
+        fail_msg: >
+          molecule group was not found inside inventory groups: {{ groups }}
+
+- name: Converge auth_get_access_token
+  hosts: molecule
+  gather_facts: false
+  vars:
+    tenant_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_TENANT_ID') }}"
+    client_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_SECRET') }}"
+  tasks:
+    - name: Assert Microsoft Graph credentials are provided
+      ansible.builtin.assert:
+        that:
+          - tenant_id | length > 0
+          - client_id | length > 0
+          - client_secret | length > 0
+        fail_msg: >
+          Set MOLECULE_TENANT_ID, MOLECULE_CLIENT_ID, and MOLECULE_CLIENT_SECRET
+          before running this scenario.
+
+    - name: Acquire Microsoft Graph access token
+      ansible.builtin.include_role:
+        name: auth_get_access_token
