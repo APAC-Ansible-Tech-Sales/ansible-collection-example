@@ -14,25 +14,26 @@ The older per-role path (`roles/<role>/molecule/`) is for testing a single role 
 
 ```text
 extensions/molecule/
-├── README.md                 # this file
-├── config.yml                # shared Molecule defaults
-├── requirements.txt          # Python packages for the controller
+├── README.md                      # this file
+├── config.yml                     # shared Molecule defaults (prerun off, no shared_state)
+├── requirements.txt               # Python packages for the controller
 ├── default/
-│   └── molecule.yml          # stub scenario (keeps collection mode quiet)
+│   └── molecule.yml               # stub scenario (keeps collection mode quiet)
 ├── shared/
-│   ├── requirements.yml      # Galaxy collections (community.docker)
-│   ├── create.yml            # start Docker hosts + dynamic inventory
-│   ├── destroy.yml           # remove containers + inventory
+│   ├── requirements.yml           # Galaxy collections (community.docker)
+│   ├── roles-requirements.yml     # empty roles file (avoids dependency "missing")
+│   ├── create.yml                 # start Docker hosts + dynamic inventory
+│   ├── destroy.yml                # remove containers + inventory
 │   └── tasks/
-│       └── create-fail.yml   # dump docker logs if create fails
-├── auth_get_access_token/
-│   ├── molecule.yml
-│   ├── converge.yml
-│   └── verify.yml
-└── send_email/
-    ├── molecule.yml
-    ├── converge.yml
-    └── verify.yml
+│       └── create-fail.yml        # dump docker logs if create fails
+├── auth_get_access_token/         # scenario: token from role can call Microsoft Graph
+│   ├── molecule.yml               # Docker platform, shared create/destroy, test sequence
+│   ├── converge.yml               # assert env creds; run auth_get_access_token on the container
+│   └── verify.yml                 # re-run role; assert Bearer token; GET graph.microsoft.com/v1.0/ → 200
+└── send_email/                    # scenario: send_email works to a null/discard recipient
+    ├── molecule.yml               # Docker platform, shared create/destroy, test sequence
+    ├── converge.yml               # assert env creds + mailboxes; run send_email on the container
+    └── verify.yml                 # re-run send_email; assert Graph sendMail returned HTTP 202
 ```
 
 ## What each file does
