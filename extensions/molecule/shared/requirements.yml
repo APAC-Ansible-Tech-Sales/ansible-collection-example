@@ -2,3 +2,4 @@
 collections:
   - name: community.docker
     version: ">=3.10.4"
+    source: https://galaxy.ansible.com/api/
