@@ -1,0 +1,37 @@
+---
+name: Lint and Test Template
+on:
+  workflow_call:
+    secrets:
+      MOLECULE_CLIENT_SECRET:
+        required: true
+
+jobs:
+  lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@main
+      - name: Checking Ansible Formatting
+        uses: ansible/ansible-lint@v26.9.0
+  test:
+    name: Molecule Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: extensions/molecule/requirements.txt
+      - name: Install Molecule dependencies
+        run: pip install -r extensions/molecule/requirements.txt
+      - name: Run Molecule tests
+        env:
+          MOLECULE_TENANT_ID: 64dc69e4-d083-49fc-9569-ebece1dd1408
+          MOLECULE_CLIENT_ID: 8e520bb8-74fc-4084-a1c1-d1e924a991f9
+          MOLECULE_CLIENT_SECRET: ${{ secrets.MOLECULE_CLIENT_SECRET }}
+        run: molecule test -s auth_get_access_token
