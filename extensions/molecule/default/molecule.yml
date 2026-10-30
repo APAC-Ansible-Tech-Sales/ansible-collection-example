@@ -1,0 +1,5 @@
+---
+# Stub default scenario. Component scenarios own their Docker lifecycle
+# (see ../shared/create.yml); this exists so Molecule collection mode is quiet.
+scenario:
+  test_sequence: []

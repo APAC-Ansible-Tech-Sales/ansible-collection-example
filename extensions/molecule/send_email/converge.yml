@@ -1,0 +1,41 @@
+---
+- name: Fail if molecule group is missing
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Assert molecule group exists
+      ansible.builtin.assert:
+        that: "'molecule' in groups"
+        fail_msg: >
+          molecule group was not found inside inventory groups: {{ groups }}
+
+- name: Converge send_email
+  hosts: molecule
+  gather_facts: false
+  vars:
+    tenant_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_TENANT_ID') }}"
+    client_id: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'MOLECULE_CLIENT_SECRET') }}"
+    sender_email: "{{ lookup('ansible.builtin.env', 'MOLECULE_SENDER_EMAIL') }}"
+    # Null/discard mailbox — set MOLECULE_RECIPIENT_EMAIL to an address that
+    # safely absorbs mail (for example a dedicated null sink mailbox).
+    recipient_email: "{{ lookup('ansible.builtin.env', 'MOLECULE_RECIPIENT_EMAIL') }}"
+    email_subject: "Molecule send_email null-recipient test"
+    email_body: "Sent by Molecule from a Docker test container."
+  tasks:
+    - name: Assert Microsoft Graph credentials and mailboxes are provided
+      ansible.builtin.assert:
+        that:
+          - tenant_id | length > 0
+          - client_id | length > 0
+          - client_secret | length > 0
+          - sender_email | length > 0
+          - recipient_email | length > 0
+        fail_msg: >
+          Set MOLECULE_TENANT_ID, MOLECULE_CLIENT_ID, MOLECULE_CLIENT_SECRET,
+          MOLECULE_SENDER_EMAIL, and MOLECULE_RECIPIENT_EMAIL (null/discard
+          address) before running this scenario.
+
+    - name: Send email to null recipient via Graph
+      ansible.builtin.include_role:
+        name: send_email

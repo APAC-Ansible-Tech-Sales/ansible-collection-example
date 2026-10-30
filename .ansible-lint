@@ -12,8 +12,10 @@ profile: basic # , basic, moderate, safety, shared, production
 exclude_paths:
   - .cache/ # implicit unless exclude_paths is defined in config
   - .github/
+  - .venv/
   - "**/docs/**"
   - "**/tests/**"
+  - "**/extensions/**"
 
 quiet: true
 strict: false

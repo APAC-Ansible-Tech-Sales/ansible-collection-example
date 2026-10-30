@@ -1,0 +1,7 @@
+---
+# Shared Molecule defaults for this collection.
+# Disable prerun so ansible-compat does not install collections/requirements.yml
+# from Automation Hub; scenarios install community.docker via dependency instead.
+prerun: false
+# Each scenario creates/destroys its own Docker container (see shared/create.yml).
+shared_state: false
