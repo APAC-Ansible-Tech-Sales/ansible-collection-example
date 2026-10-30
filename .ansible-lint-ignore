@@ -1,3 +1,4 @@
 playbooks/get_access_token.yml syntax-check[specific]
 extensions/molecule/shared/create.yml syntax-check[unknown-module]
 extensions/molecule/shared/destroy.yml syntax-check[unknown-module]
+extensions/molecule/shared/roles-requirements.yml
