@@ -15,6 +15,7 @@ exclude_paths:
   - .venv/
   - "**/docs/**"
   - "**/tests/**"
+  - "**/extensions/**"
 
 quiet: true
 strict: false

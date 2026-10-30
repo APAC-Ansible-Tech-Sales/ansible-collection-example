@@ -84,11 +84,13 @@ The same flow applies to `send_email`, with that scenario’s converge/verify pl
 
 ## Prerequisites
 
-- Docker daemon running on the controller
+- A **Docker engine must be running** on the machine where you invoke Molecule (local Docker Desktop/Engine, or CI with Docker available). Scenarios create and destroy containers via `community.docker`.
 - Python 3 with a virtualenv
 - Entra ID app registration with Graph permissions appropriate to the scenario (`Mail.Send` for `send_email`)
 
 ## Setup
+
+Confirm Docker is up (`docker info` should succeed), then:
 
 ```bash
 python3 -m venv .venv
